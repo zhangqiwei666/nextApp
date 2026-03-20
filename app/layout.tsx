@@ -13,7 +13,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "短视频-我的美好生活",
+  title: "我的next app",
   description: "标记我的生活 - 短视频",
 };
 
