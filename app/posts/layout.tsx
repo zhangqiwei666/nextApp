@@ -67,6 +67,7 @@ export default function PostsLayout({
             <ul className="space-y-1 list-none p-0 m-0">
               <li>
                 <Link
+                  prefetch
                   href="/posts"
                   className="flex items-center gap-2 px-3 py-2 text-sm text-gray-600 rounded-lg hover:bg-gray-100 transition-colors no-underline"
                 >
@@ -77,6 +78,7 @@ export default function PostsLayout({
               {sidebarPosts.map((post) => (
                 <li key={post.id}>
                   <Link
+                    prefetch
                     href={`/posts/${post.id}`}
                     className="flex items-center gap-2 px-3 py-2 text-sm text-gray-600 rounded-lg hover:bg-violet-50 hover:text-violet-700 transition-colors no-underline"
                   >
