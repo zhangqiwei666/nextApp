@@ -20,7 +20,7 @@ const nextConfig: NextConfig = {
       // 前端请求 /api/discover/list → 实际请求 http://115.191.43.57/api/discover/list
       {
         source: '/api/:path*',
-        destination: `${process.env.BACKEND_URL || 'http://localhost:3000'}/api/:path*`,
+        destination: `${process.env.BACKEND_URL || 'http://localhost:3005'}/api/:path*`,
       },
       // 示例2：代理特定路径
       // 前端请求 /api/auth/login → http://auth-service:3001/auth/login

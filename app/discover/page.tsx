@@ -1,6 +1,6 @@
 import BottomNav from "../components/BottomNav";
 import Link from "next/link";
-import { hotTopicsApi, HotTopic } from "../lib/api";
+import { hotTopicsApi, HotTopic } from "../api/api";
 
 // ============================================================
 // 🟢 SSR — Server Component（服务端渲染）

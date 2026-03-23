@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback } from "react";
 import BottomNav from "../components/BottomNav";
 import Link from "next/link";
-import { hotTopicsApi, type HotTopic } from "../lib/api";
+import { hotTopicsApi, type HotTopic } from "../api/api";
 
 // ============================================================
 // 🔴 CSR — Client Component（客户端渲染）
