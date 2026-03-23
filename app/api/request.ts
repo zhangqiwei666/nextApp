@@ -35,7 +35,6 @@ interface Interceptors {
  */
 function getBaseURL(): string {
   // 服务端环境：需要完整 URL
-  console.log('typeof window123131313',typeof window === 'undefined')
   if (typeof window === 'undefined') {
     return process.env.BACKEND_URL || 'http://localhost:3005';
   }
