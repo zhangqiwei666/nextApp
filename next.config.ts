@@ -17,10 +17,10 @@ const nextConfig: NextConfig = {
   async rewrites() {
     return [
       // 示例1：代理到外部后端（最常用）
-      // 前端请求 /api/backend/users → 实际请求 http://192.168.31.225:8080/users
+      // 前端请求 /api/discover/list → 实际请求 http://115.191.43.57/api/discover/list
       {
         source: '/api/:path*',
-        destination: `${process.env.BACKEND_URL || 'http://localhost:3000'}/:path*`,
+        destination: `${process.env.BACKEND_URL || 'http://localhost:3000'}/api/:path*`,
       },
       // 示例2：代理特定路径
       // 前端请求 /api/auth/login → http://auth-service:3001/auth/login
