@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback } from "react";
 import BottomNav from "../components/BottomNav";
 import Link from "next/link";
+import { hotTopicsApi, type HotTopic } from "../lib/api";
 
 // ============================================================
 // 🔴 CSR — Client Component（客户端渲染）
@@ -10,18 +11,6 @@ import Link from "next/link";
 // 浏览器先收到空白骨架 HTML，然后 JS 执行，发 fetch 请求获取数据
 // 用户会先看到 Loading 状态，再看到内容
 // ============================================================
-
-interface HotTopic {
-  id: number;
-  rank: number;
-  title: string;
-  description: string;
-  image: string;
-  heat: number;
-  tag?: string;
-  isNew?: boolean;
-  isHot?: boolean;
-}
 
 export default function DiscoverCSRPage() {
   const [topics, setTopics] = useState<HotTopic[]>([]);
@@ -32,10 +21,7 @@ export default function DiscoverCSRPage() {
 
   const fetchData = useCallback(async () => {
     setLoading(true);
-    setTopics([]);
-
     const start = Date.now();
-
     // 记录开始请求的时间
     setClientTime(
       new Date().toLocaleString("zh-CN", {
@@ -51,20 +37,34 @@ export default function DiscoverCSRPage() {
     // 🔑 关键区别：这里的 fetch 在 浏览器 中执行！
     // 你可以在 Network 面板清楚地看到这个请求
     console.log("[CSR Client] 开始在浏览器端请求数据...");
-
-    const res = await fetch("/api/hot-topics");
-    const data = await res.json();
-
-    const duration = Date.now() - start;
-
-    console.log(
-      `[CSR Client] 浏览器端数据获取完成，耗时 ${duration}ms，共 ${data.topics.length} 条热搜`
-    );
-
-    setTopics(data.topics);
-    setFetchTime(data.serverTime);
-    setFetchDuration(duration);
+    // ✅ 使用封装后的 API，自动处理 baseURL、错误、超时
+    try{
+      const {data, code } = await hotTopicsApi.getTopics();
+      const duration = Date.now() - start;
+      if(code === 200) {
+        console.log(
+          `[CSR Client] 浏览器端数据获取完成，耗时 ${duration}ms，共 ${data} 条热搜`
+        );
+        setTopics(data);
+        const serverTime = new Date().toLocaleString("zh-CN", {
+            timeZone: "Asia/Shanghai",
+            year: "numeric",
+            month: "2-digit",
+            day: "2-digit",
+            hour: "2-digit",
+            minute: "2-digit",
+            second: "2-digit",
+          });
+        setFetchTime(serverTime);
+        setFetchDuration(duration);
+        
+      }
+    }catch{
+        setTopics([]);
+    }finally{
     setLoading(false);
+    }
+    
   }, []);
 
   useEffect(() => {

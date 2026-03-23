@@ -79,6 +79,7 @@ export default function BottomNav() {
             <Link
               key={idx}
               href={item.href}
+              prefetch={true}
               className={`
                 flex flex-col items-center gap-0.5 min-w-[3.5rem] py-1
                 transition-all duration-200 no-underline

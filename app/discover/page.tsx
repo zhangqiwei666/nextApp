@@ -1,5 +1,6 @@
 import BottomNav from "../components/BottomNav";
 import Link from "next/link";
+import { hotTopicsApi, HotTopic } from "../lib/api";
 
 // ============================================================
 // 🟢 SSR — Server Component（服务端渲染）
@@ -8,41 +9,50 @@ import Link from "next/link";
 // 用户看到页面时，内容已经全部就绪（无 Loading 状态）
 // ============================================================
 
-interface HotTopic {
-  id: number;
-  rank: number;
-  title: string;
-  description: string;
-  image: string;
-  heat: number;
-  tag?: string;
-  isNew?: boolean;
-  isHot?: boolean;
-}
-
-interface ApiResponse {
-  topics: HotTopic[];
-  serverTime: string;
-  fetchedAt: number;
-}
-
 export default async function DiscoverPage() {
   // 🔑 关键区别：这里的 fetch 在 NODE.JS 服务端执行！
   // 浏览器完全看不到这个请求（Network 面板不会出现）
+  // eslint-disable-next-line react-hooks/purity
   const startTime = Date.now();
-
-  const res = await fetch("http://localhost:3000/api/hot-topics", {
-    cache: "no-store", // 每次都重新获取，展示 SSR 动态特性
-  });
-  const data: ApiResponse = await res.json();
-  const { topics, serverTime } = data;
-
-  const fetchDuration = Date.now() - startTime;
-
-  // 这行 console.log 只会出现在 终端/服务端控制台 中！
-  console.log(
-    `[SSR Server] 发现页数据已在服务端获取，耗时 ${fetchDuration}ms，共 ${topics.length} 条热搜`
-  );
+  interface Response {
+    data: Array<HotTopic>,
+    value: string,
+    fetchDuration: number
+  }
+  // ✅ 使用封装后的 API，一行搞定
+  const response:Response = {
+    data: [],
+    value: '',
+    fetchDuration: 0
+  }
+  try{
+    const res = await hotTopicsApi.getTopicsSSR();
+    const { data, code } = res;
+    response.data = data
+    if(code === 200) {
+      // eslint-disable-next-line react-hooks/purity
+      response.fetchDuration = Date.now() - startTime;
+      response.value = new Date().toLocaleString("zh-CN", {
+            timeZone: "Asia/Shanghai",
+            year: "numeric",
+            month: "2-digit",
+            day: "2-digit",
+            hour: "2-digit",
+            minute: "2-digit",
+            second: "2-digit",
+          });
+      // 这行 console.log 只会出现在 终端/服务端控制台 中！
+      console.log(
+        `[SSR Server] 发现页数据已在服务端获取，耗时 ${response.fetchDuration}ms，共 ${data.length} 条热搜`
+      );
+    }
+    
+  }catch{
+    response.data = [];
+    response.value = '';
+    response.fetchDuration = 0;
+  }
+  
 
   return (
     <div className="min-h-screen bg-white max-w-lg mx-auto relative pb-16">
@@ -73,8 +83,8 @@ export default async function DiscoverPage() {
             </span>
           </div>
           <div className="space-y-1.5 text-[12px] text-emerald-600">
-            <p>📌 数据在 <strong>Node.js 服务端</strong> 获取，耗时 <strong>{fetchDuration}ms</strong></p>
-            <p>📌 服务端获取时间: <strong>{serverTime}</strong></p>
+            <p>📌 数据在 <strong>Node.js 服务端</strong> 获取，耗时 <strong>{response.fetchDuration}ms</strong></p>
+            <p>📌 服务端获取时间: <strong>{response.value}</strong></p>
             <p>📌 浏览器收到的是 <strong>完整的 HTML</strong>，无需二次请求</p>
             <p>📌 查看 <strong>网页源代码</strong> 可以看到所有热搜数据</p>
             <p>📌 浏览器 Network 面板 <strong>没有</strong> /api/hot-topics 请求</p>
@@ -103,7 +113,7 @@ export default async function DiscoverPage() {
 
       {/* 热榜列表 —— 数据在服务端已渲染好 HTML，到达浏览器时内容完整 */}
       <div className="divide-y divide-gray-50">
-        {topics.map((topic) => (
+        {response.data?.map((topic) => (
           <article key={topic.id} className="px-4 py-3.5 flex gap-3 hover:bg-gray-50/80 transition-colors cursor-pointer group">
             {/* 排名 */}
             <div className="flex-shrink-0 w-7 pt-0.5">
