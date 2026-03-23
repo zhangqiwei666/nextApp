@@ -30,7 +30,7 @@ export interface HotTopicsResponse {
 export const hotTopicsApi = {
   /** 获取热搜列表（客户端调用） */
   getTopics() {
-    return http.get<HotTopicsResponse>('/api/discover-crs/list');
+    return http.get<HotTopicsResponse>('/api/discover/list');
   },
 
   /** 获取热搜列表（服务端 SSR，每次动态获取） */

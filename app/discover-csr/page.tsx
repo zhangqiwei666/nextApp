@@ -57,9 +57,11 @@ export default function DiscoverCSRPage() {
           });
         setFetchTime(serverTime);
         setFetchDuration(duration);
-        
+      }else {
+        throw new Error('code is not 200'); 
       }
-    }catch{
+    }catch(error){
+        console.error("[CSR Client] 浏览器端数据获取失败:", error);
         setTopics([]);
     }finally{
     setLoading(false);
