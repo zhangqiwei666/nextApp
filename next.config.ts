@@ -1,6 +1,11 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  // ===================== 部署路径 =====================
+  // 生产环境 Nginx 通过 /app/ 代理，需要 basePath
+  // 开发环境不需要，通过 .env 文件控制
+  basePath: process.env.NEXT_PUBLIC_BASE_PATH || '',
+
   // 2. 自定义构建输出目录（默认是 .next）
   // distDir: 'build', // 若修改，启动生产环境需加 --dir build
 
