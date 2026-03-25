@@ -53,6 +53,11 @@ const nextConfig: NextConfig = {
   //         expire: 10,
   //     }
   // },
+  // 去掉console
+  compiler: {
+    // 仅在生产环境移除 console
+    removeConsole: process.env.NODE_ENV === 'production',
+  },
 };
 
 export default nextConfig;

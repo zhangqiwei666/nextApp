@@ -64,7 +64,6 @@ async function request<T = unknown>(
     ...restConfig
   } = config;
 
- console.log('config', config, 'url', url)  
   // 1. 拼接完整 URL
   const base = baseURL ?? getBaseURL();
   let fullUrl = `${base}${url}`;
@@ -77,7 +76,6 @@ async function request<T = unknown>(
     });
     fullUrl += `?${searchParams.toString()}`;
   }
-  console.log('fullUrl', fullUrl)
 
   // 3. 构建请求头
   const headers: Record<string, string> = {
