@@ -1,10 +1,10 @@
-// middleware.ts（放在项目根目录）
+// proxy.ts（放在项目根目录）
 import { NextRequest, NextResponse } from 'next/server';
 
 // 不需要登录的白名单路径
 const PUBLIC_PATHS = ['/login', '/register', '/'];
 
-export function middleware(request: NextRequest) {
+export function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
   // 白名单路径直接放行（'/' 精确匹配，其他前缀匹配）

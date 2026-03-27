@@ -4,6 +4,9 @@
 // 同时适配 客户端组件（CSR）和 服务端组件（SSR）
 // ============================================================
 
+import { redirect } from 'next/navigation';
+
+
 // ==================== 类型定义 ====================
 
 /** 请求配置 */
@@ -66,7 +69,11 @@ async function request<T = unknown>(
 
   // 1. 拼接完整 URL
   const base = baseURL ?? getBaseURL();
-  let fullUrl = `${base}${url}`;
+  // 服务端直连后端时，去掉 /api 前缀（BACKEND_URL 在生产环境已包含 /api）
+  const normalizedUrl = (typeof window === 'undefined' && !baseURL && url.startsWith('/api'))
+    ? url.replace(/^\/api/, '')
+    : url;
+  let fullUrl = `${base}${normalizedUrl}`;
 
   // 2. 处理 GET 请求的查询参数
   if (params) {
@@ -137,7 +144,9 @@ async function request<T = unknown>(
     // 12. 如果后端返回了统一的 { code, data, message } 结构
     //     可以在这里统一处理业务错误码
     if (data && typeof data === 'object' && 'code' in data) {
-      if (data.code !== 200) {
+      if(data.code === 401){
+          redirect('/login')
+      } else if (data.code !== 200) {
         throw new BusinessError(data.code, data.message, data.data);
       }
       // 返回完整响应对象（调用方的泛型    应为完整响应类型，如 HotTopicsResponse）

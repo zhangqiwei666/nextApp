@@ -1,10 +1,12 @@
 "use client";
 
+import { useEffect } from "react";
 import Header from "./components/Header";
 import CategoryTabs from "./components/CategoryTabs";
 import BottomNav from "./components/BottomNav";
 import WaterfallCard from "./components/WaterfallCard";
 import type { CardData } from "./components/WaterfallCard";
+import { useRouter } from 'next/navigation';
 
 const feedData: CardData[] = [
   {
@@ -91,6 +93,15 @@ const feedData: CardData[] = [
 ];
 
 export default function HomePage() {
+  const router = useRouter();
+
+  // 客户端挂载后检查 token，无权限跳转到登录页
+  useEffect(() => {
+    if (!localStorage.getItem('token')) {
+      router.replace('/login');
+    }
+  }, [router]);
+
   // Split cards into left and right columns for waterfall layout
   const leftCards = feedData.filter((_, i) => i % 2 === 0);
   const rightCards = feedData.filter((_, i) => i % 2 === 1);
