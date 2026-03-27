@@ -4,7 +4,7 @@
 // ============================================================
 
 import http from './request';
-
+import type { CardData } from "./components/WaterfallCard";
 // ==================== 类型定义 ====================
 
 export interface HotTopic {
@@ -21,6 +21,12 @@ export interface HotTopic {
 
 export interface HotTopicsResponse {
   data: HotTopic[];
+  message: string;
+  code: number;
+}
+
+export interface HomeListResponse {
+  data: CardData[];
   message: string;
   code: number;
 }
@@ -46,6 +52,12 @@ export const hotTopicsApi = {
       revalidate: seconds,
     });
   },
+
+  getHomeList() {
+    return http.ssrGet<HomeListResponse>('/api/feedData', undefined, {
+      revalidate: 'no-store',
+    })
+  }
 };
 
 // ==================== 用户相关接口（示例） ====================

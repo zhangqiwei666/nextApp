@@ -66,8 +66,6 @@ const navItems = [
 
 export default function BottomNav() {
   const pathname = usePathname();
-  console.log('pathname', pathname)
-
   return (
     <nav className="fixed bottom-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-md border-t border-gray-100">
       <div className="max-w-lg mx-auto flex items-center justify-around py-1.5 pb-[max(0.375rem,env(safe-area-inset-bottom))]">

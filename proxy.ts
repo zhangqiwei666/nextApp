@@ -2,7 +2,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 
 // 不需要登录的白名单路径
-const PUBLIC_PATHS = ['/login', '/register', '/'];
+const PUBLIC_PATHS = ['/login'];
 
 export function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
@@ -14,13 +14,12 @@ export function proxy(request: NextRequest) {
 
   // 从 cookie 中获取 token
   const token = request.cookies.get('token')?.value;
-  console.log('token', token)
   // 没有 token → 重定向到登录页
-//   if (!token) {
-//     const loginUrl = new URL('/login', request.url);
-//     loginUrl.searchParams.set('redirect', pathname); // 记录原始路径
-//     return NextResponse.redirect(loginUrl);
-//   }
+  if (!token) {
+    const loginUrl = new URL('/login', request.url);
+    loginUrl.searchParams.set('redirect', pathname); // 记录原始路径
+    return NextResponse.redirect(loginUrl);
+  }
 
   // 有 token → 放行（可选：验证 token 有效性）
   return NextResponse.next();
