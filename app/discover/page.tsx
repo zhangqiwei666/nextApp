@@ -47,7 +47,13 @@ export default async function DiscoverPage() {
       );
     }
     
-  }catch{
+  }catch(error: unknown){
+    // redirect() 会抛出特殊错误，必须重新抛出，否则跳转不生效
+    if (error && typeof error === 'object' && 'digest' in error && 
+        typeof (error as { digest: string }).digest === 'string' && 
+        (error as { digest: string }).digest.includes('NEXT_REDIRECT')) {
+      throw error;
+    }
     response.data = [];
     response.value = '';
     response.fetchDuration = 0;

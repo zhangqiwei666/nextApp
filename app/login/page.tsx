@@ -5,6 +5,7 @@ import {Eye, EyeSlash} from "@gravity-ui/icons";
 import {Button, FieldError, Form, Input, TextField, InputGroup} from "@heroui/react";
 import {userApi} from '../api/login'
 import { useRouter } from 'next/navigation';
+// import { cookies } from 'next/headers';
 export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
   const router = useRouter();
@@ -21,7 +22,10 @@ export default function LoginPage() {
     try{
       const {code, data: response} = await userApi.login(data.username, data.password)
       if (code === 200) {
+        // 客户端存 localStorage（CSR 使用）
         localStorage.setItem('token', response.token);
+        // 同时存 cookie（SSR 使用，服务端通过 cookies() 读取）
+        document.cookie = `token=${response.token}; path=/; max-age=${1 * 24 * 3600}`;
         router.push('/')
     }
     }catch(err){

@@ -3,8 +3,7 @@
 // 统一处理：基础路径、错误处理、超时、拦截器、TypeScript 类型
 // 同时适配 客户端组件（CSR）和 服务端组件（SSR）
 // ============================================================
-
-import { redirect } from 'next/navigation';
+// 服务端渲染拿不到localstorage 只能用cookie存取token
 
 
 // ==================== 类型定义 ====================
@@ -90,11 +89,24 @@ async function request<T = unknown>(
     ...(customHeaders as Record<string, string>),
   };
 
-  // 4. 如果有 token，自动添加 Authorization 头
+  // 4. 如果有 token，自动添加 Authorization 
   if (typeof window !== 'undefined') {
+    // 客户端：从 localStorage 读取
     const token = localStorage.getItem('token');
     if (token) {
       headers['Authorization'] = `Bearer ${token}`;
+    }
+  } else {
+    // 服务端（SSR）：从 cookie 读取（动态导入，避免污染客户端模块）
+    try {
+      const { cookies } = await import('next/headers');
+      const cookieStore = await cookies();
+      const token = cookieStore.get('token')?.value;
+      if (token) {
+        headers['Authorization'] = `Bearer ${token}`;
+      }
+    } catch {
+      // 非 Server Component 上下文（如 build 阶段），忽略
     }
   }
 
@@ -131,6 +143,20 @@ async function request<T = unknown>(
     // 10. HTTP 状态码错误处理
     if (!response.ok) {
       const errorData = await response.json().catch(() => ({}));
+      // 401 未授权 → 跳转登录页
+      if (response.status === 401 || response.status === 403) {
+        if (typeof window !== 'undefined') {
+          // 客户端：直接跳转
+          localStorage.removeItem('token');
+          window.location.href = '/login';
+          return undefined as T;
+        } else {
+          // 服务端（SSR）：使用 redirect（会抛出特殊错误，调用方不要 catch 它）
+          const { redirect } = await import('next/navigation');
+          redirect('/login');
+        }
+      }
+      
       throw new HttpError(
         response.status,
         (errorData as { message?: string }).message || response.statusText,
@@ -144,9 +170,7 @@ async function request<T = unknown>(
     // 12. 如果后端返回了统一的 { code, data, message } 结构
     //     可以在这里统一处理业务错误码
     if (data && typeof data === 'object' && 'code' in data) {
-      if(data.code === 401){
-          redirect('/login')
-      } else if (data.code !== 200) {
+     if (data.code !== 200) {
         throw new BusinessError(data.code, data.message, data.data);
       }
       // 返回完整响应对象（调用方的泛型    应为完整响应类型，如 HotTopicsResponse）
