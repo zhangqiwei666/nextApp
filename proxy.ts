@@ -16,8 +16,14 @@ export function proxy(request: NextRequest) {
   const token = request.cookies.get('token')?.value;
   // 没有 token → 重定向到登录页
   if (!token) {
-    const loginUrl = new URL('/login', request.url);
+    let loginUrl: URL;
+    if(typeof window !== undefined){
+      loginUrl = new URL('/login', request.url);
+    }else {
+      loginUrl = new URL('/app/login', request.url);
+    }
     loginUrl.searchParams.set('redirect', pathname); // 记录原始路径
+    
     return NextResponse.redirect(loginUrl);
   }
 
