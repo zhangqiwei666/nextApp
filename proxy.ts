@@ -7,8 +7,8 @@ const PUBLIC_PATHS = ['/login'];
 export function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
-  // 白名单路径直接放行（'/' 精确匹配，其他前缀匹配）
-  if (pathname === '/' || PUBLIC_PATHS.some(path => pathname.startsWith(path))) {
+  // 白名单路径直接放行（现在只有 /login 在里面）
+  if (PUBLIC_PATHS.some(path => pathname.startsWith(path))) {
     return NextResponse.next();
   }
 
@@ -17,8 +17,8 @@ export function proxy(request: NextRequest) {
   // 没有 token → 重定向到登录页
   if (!token) {
      const loginUrl = request.nextUrl.clone();
-     loginUrl.pathname = '/login';
-    loginUrl.searchParams.set('redirect', request.nextUrl.pathname); 
+     loginUrl.pathname = '/login'; 
+     loginUrl.searchParams.set('redirect', request.nextUrl.pathname); 
     return NextResponse.redirect(loginUrl);
   }
 
