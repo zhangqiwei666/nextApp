@@ -68,11 +68,9 @@ async function request<T = unknown>(
 
   // 1. 拼接完整 URL
   const base = baseURL ?? getBaseURL();
-  // 服务端直连后端时，去掉 /api 前缀（BACKEND_URL 在生产环境已包含 /api）
-  const normalizedUrl = (typeof window === 'undefined' && !baseURL && url.startsWith('/api'))
-    ? url.replace(/^\/api/, '')
-    : url;
-  let fullUrl = `${base}${normalizedUrl}`;
+  // // 服务端直连后端时，去掉 /api 前缀（BACKEND_URL 在生产环境已包含 /api）
+  // const normalizedUrl = (typeof window === 'undefined' && !baseURL && url.startsWith('/api'))
+  let fullUrl = `${base}${url}`;
 
   // 2. 处理 GET 请求的查询参数
   if (params) {
@@ -145,16 +143,24 @@ async function request<T = unknown>(
       const errorData = await response.json().catch(() => ({}));
       // 401 未授权 → 跳转登录页
       if (response.status === 401 || response.status === 403) {
+        const msg = (errorData as { message?: string }).message || '登录已失效，请重新登录';
         if (typeof window !== 'undefined') {
-          // 客户端：直接跳转
+          // 客户端：清除无效 token，改为交给调用方处理
           localStorage.removeItem('token');
-          window.location.href = '/login';
-          return undefined as T;
-        } else {
-          // 服务端（SSR）：使用 redirect（会抛出特殊错误，调用方不要 catch 它）
+          const currentUrl = encodeURIComponent(window.location.pathname + window.location.search);
+          window.location.href = `/login?error=${encodeURIComponent(msg)}&redirect=${currentUrl}`;
+           return undefined as T;
+        }else {
+          // 服务端（SSR）：由于服务端没有 window 对象，可后续在中间件 (middleware) 处理重定向源路径
           const { redirect } = await import('next/navigation');
-          redirect('/login');
+          redirect(`/login?error=${encodeURIComponent(msg)}`);
         }
+      } else if (response.status === 402) {
+        throw new HttpError(
+          response.status,
+          (errorData as { message?: string }).message || '账号密码错误',
+          errorData
+        );
       }
       
       throw new HttpError(

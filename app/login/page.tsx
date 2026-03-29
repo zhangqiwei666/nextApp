@@ -2,34 +2,49 @@
 
 import { useState } from "react";
 import {Eye, EyeSlash} from "@gravity-ui/icons";
-import {Button, FieldError, Form, Input, TextField, InputGroup} from "@heroui/react";
+import {Button, FieldError, Form, Input, TextField, InputGroup, toast} from "@heroui/react";
 import {userApi} from '../api/login'
-import { useRouter } from 'next/navigation';
+import { HttpError} from '../api/request';
 // import { cookies } from 'next/headers';
 export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
-  const router = useRouter();
 
   const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const formData = new FormData(e.currentTarget);
-    const data: Record<string, string> = {};
+    const userInfo: Record<string, string> = {};
 
     // Convert FormData to plain object
     formData.forEach((value, key) => {
-      data[key] = value.toString();
+      userInfo[key] = value.toString();
     });
-    try{
-      const {code, data: response} = await userApi.login(data.username, data.password)
+    try {
+      const { code, data } = await userApi.login(userInfo.username, userInfo.password);
       if (code === 200) {
         // 客户端存 localStorage（CSR 使用）
-        localStorage.setItem('token', response.token);
+        localStorage.setItem('token', data.token || '');
         // 同时存 cookie（SSR 使用，服务端通过 cookies() 读取）
-        document.cookie = `token=${response.token}; path=/; max-age=${1 * 24 * 3600}`;
-        router.push('/')
-    }
-    }catch(err){
-      console.log(err)
+        document.cookie = `token=${data.token}; path=/; max-age=${1 * 24 * 3600}`;
+        
+        // 解析鉴权前的路径并跳转 (支持 redirect / from / callbackUrl 等常见参数名)
+        const params = new URLSearchParams(window.location.search);
+        let redirectUrl = params.get('redirect') || params.get('from') || params.get('callbackUrl') || '/';
+        
+        // 防御性：如果 redirectURL 恰巧又是 /login 自己，强制跳转到 /，防止在登录页死循环
+        if (redirectUrl.startsWith('/login')) {
+          redirectUrl = '/';
+        }
+
+        // 使用 window.location.href 强跳，确保服务端和中间件获取最新 Cookie 并丢弃旧的路由缓存
+        window.location.href = redirectUrl;
+        return;
+      }
+    } catch (err) {
+      if (err instanceof HttpError && err.status === 402) {
+        toast.danger('认证失败：账号密码错误');
+        return;
+      }
+      console.error(err);
     }
   };
 

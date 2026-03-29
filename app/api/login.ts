@@ -15,7 +15,8 @@ export interface Response {
 
 interface LoginResponse {
   data: {
-    token: string;
+    token?: string;
+    message?: string;
   };
   message: string;
   code: number;
