@@ -6,7 +6,6 @@ const PUBLIC_PATHS = ['/login'];
 
 export function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
-
   // 白名单路径直接放行（现在只有 /login 在里面）
   if (PUBLIC_PATHS.some(path => pathname.startsWith(path))) {
     return NextResponse.next();
