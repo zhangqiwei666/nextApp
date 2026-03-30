@@ -108,3 +108,166 @@ body {
 .stagger-6 { animation-delay: 0.3s; }
 .stagger-7 { animation-delay: 0.35s; }
 .stagger-8 { animation-delay: 0.4s; }
+
+/* ==============================
+   Toast 自定义样式
+   ============================== */
+
+/* 定位区域 */
+.toast-region--top,
+.toast-region--top-start,
+.toast-region--top-end {
+  top: 20px !important;
+  z-index: 9999;
+}
+
+/* Toast 基础样式 */
+.toast {
+  display: flex !important;
+  align-items: center !important;
+  gap: 12px !important;
+  min-width: 300px !important;
+  max-width: 420px !important;
+  padding: 14px 16px !important;
+  border-radius: 14px !important;
+  background: rgba(30, 30, 35, 0.85) !important;
+  backdrop-filter: blur(16px) saturate(180%) !important;
+  -webkit-backdrop-filter: blur(16px) saturate(180%) !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  box-shadow:
+    0 8px 32px rgba(0, 0, 0, 0.25),
+    0 2px 8px rgba(0, 0, 0, 0.15),
+    inset 0 1px 0 rgba(255, 255, 255, 0.06) !important;
+  color: #f0f0f0 !important;
+  font-size: 14px !important;
+  font-weight: 500 !important;
+  line-height: 1.5 !important;
+  position: relative !important;
+  overflow: hidden !important;
+  animation: toastSlideIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) forwards !important;
+}
+
+/* 左侧彩色指示条 */
+.toast::before {
+  content: "" !important;
+  position: absolute !important;
+  left: 0 !important;
+  top: 0 !important;
+  bottom: 0 !important;
+  width: 4px !important;
+  border-radius: 14px 0 0 14px !important;
+  background: rgba(255, 255, 255, 0.25) !important;
+}
+
+/* Danger 变体 */
+.toast--danger {
+  background: rgba(40, 15, 20, 0.88) !important;
+  border-color: rgba(255, 36, 66, 0.25) !important;
+  box-shadow:
+    0 8px 32px rgba(255, 36, 66, 0.15),
+    0 2px 8px rgba(0, 0, 0, 0.15),
+    inset 0 1px 0 rgba(255, 100, 120, 0.08) !important;
+}
+.toast--danger::before {
+  background: linear-gradient(180deg, #ff2442, #ff6b81) !important;
+}
+
+/* Success 变体 */
+.toast--success {
+  background: rgba(10, 35, 20, 0.88) !important;
+  border-color: rgba(34, 197, 94, 0.25) !important;
+  box-shadow:
+    0 8px 32px rgba(34, 197, 94, 0.12),
+    0 2px 8px rgba(0, 0, 0, 0.15),
+    inset 0 1px 0 rgba(34, 197, 94, 0.08) !important;
+}
+.toast--success::before {
+  background: linear-gradient(180deg, #22c55e, #4ade80) !important;
+}
+
+/* Warning 变体 */
+.toast--warning {
+  background: rgba(35, 25, 5, 0.88) !important;
+  border-color: rgba(234, 179, 8, 0.25) !important;
+  box-shadow:
+    0 8px 32px rgba(234, 179, 8, 0.12),
+    0 2px 8px rgba(0, 0, 0, 0.15),
+    inset 0 1px 0 rgba(234, 179, 8, 0.08) !important;
+}
+.toast--warning::before {
+  background: linear-gradient(180deg, #eab308, #facc15) !important;
+}
+
+/* Accent 变体 */
+.toast--accent {
+  background: rgba(15, 20, 45, 0.88) !important;
+  border-color: rgba(99, 102, 241, 0.25) !important;
+}
+.toast--accent::before {
+  background: linear-gradient(180deg, #6366f1, #818cf8) !important;
+}
+
+/* 指示器图标 */
+.toast__indicator {
+  flex-shrink: 0 !important;
+  width: 20px !important;
+  height: 20px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  opacity: 0.9 !important;
+}
+
+/* 内容区（title + description） */
+.toast__content {
+  flex: 1 !important;
+  min-width: 0 !important;
+}
+
+/* 标题文字 */
+.toast__title {
+  font-size: 14px !important;
+  font-weight: 600 !important;
+  color: #f5f5f5 !important;
+  letter-spacing: 0.01em !important;
+}
+
+/* 描述文字 */
+.toast__description {
+  font-size: 12px !important;
+  font-weight: 400 !important;
+  color: rgba(255, 255, 255, 0.55) !important;
+  margin-top: 2px !important;
+}
+
+/* 关闭按钮 */
+.toast__close-button {
+  flex-shrink: 0 !important;
+  width: 24px !important;
+  height: 24px !important;
+  border-radius: 6px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  color: rgba(255, 255, 255, 0.4) !important;
+  background: transparent !important;
+  border: none !important;
+  cursor: pointer !important;
+  transition: color 0.15s ease, background 0.15s ease !important;
+}
+.toast__close-button:hover {
+  color: rgba(255, 255, 255, 0.8) !important;
+  background: rgba(255, 255, 255, 0.08) !important;
+}
+
+/* 进场动画 */
+@keyframes toastSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-12px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}

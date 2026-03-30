@@ -45,6 +45,9 @@ export const userApi = {
   login(username: string, password: string) {
     return http.post<LoginResponse>('/api/login', { username, password });
   },
+  register(username: string, password: string) {
+    return http.post<LoginResponse>('/api/register', { username, password });
+  },
 };
 
 
