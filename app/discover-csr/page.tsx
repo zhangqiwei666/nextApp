@@ -38,35 +38,35 @@ export default function DiscoverCSRPage() {
     // 你可以在 Network 面板清楚地看到这个请求
     console.log("[CSR Client] 开始在浏览器端请求数据...");
     // ✅ 使用封装后的 API，自动处理 baseURL、错误、超时
-    try{
-      const {data, code } = await hotTopicsApi.getTopics();
+    try {
+      const { data, code } = await hotTopicsApi.getTopics();
       const duration = Date.now() - start;
-      if(code === 200) {
+      if (code === 200) {
         console.log(
           `[CSR Client] 浏览器端数据获取完成，耗时 ${duration}ms，共 ${data} 条热搜`
         );
         setTopics(data);
         const serverTime = new Date().toLocaleString("zh-CN", {
-            timeZone: "Asia/Shanghai",
-            year: "numeric",
-            month: "2-digit",
-            day: "2-digit",
-            hour: "2-digit",
-            minute: "2-digit",
-            second: "2-digit",
-          });
+          timeZone: "Asia/Shanghai",
+          year: "numeric",
+          month: "2-digit",
+          day: "2-digit",
+          hour: "2-digit",
+          minute: "2-digit",
+          second: "2-digit",
+        });
         setFetchTime(serverTime);
         setFetchDuration(duration);
-      }else {
-        throw new Error('code is not 200'); 
+      } else {
+        throw new Error('code is not 200');
       }
-    }catch(error){
-        console.error("[CSR Client] 浏览器端数据获取失败:", error);
-        setTopics([]);
-    }finally{
-    setLoading(false);
+    } catch (error) {
+      console.error("[CSR Client] 浏览器端数据获取失败:", error);
+      setTopics([]);
+    } finally {
+      setLoading(false);
     }
-    
+
   }, []);
 
   useEffect(() => {
@@ -177,15 +177,14 @@ export default function DiscoverCSRPage() {
               {/* 排名 */}
               <div className="flex-shrink-0 w-7 pt-0.5">
                 <span
-                  className={`text-lg font-black leading-none ${
-                    topic.rank <= 3
+                  className={`text-lg font-black leading-none ${topic.rank <= 3
                       ? topic.rank === 1
                         ? "text-red-500"
                         : topic.rank === 2
-                        ? "text-orange-500"
-                        : "text-orange-400"
+                          ? "text-orange-500"
+                          : "text-orange-400"
                       : "text-gray-300"
-                  }`}
+                    }`}
                 >
                   {String(topic.rank).padStart(2, "0")}
                 </span>
