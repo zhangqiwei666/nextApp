@@ -2,7 +2,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 
 // 不需要登录的白名单路径
-const PUBLIC_PATHS = ['/login'];
+const PUBLIC_PATHS = ['/login', '/register'];
 
 export function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
