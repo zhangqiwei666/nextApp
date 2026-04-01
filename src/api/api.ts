@@ -66,10 +66,11 @@ export const hotTopicsApi = {
     })
   },
 
-  getChat(message: string){
-    return http.stream('/api/chat', { 
+  getChat(message: string, options?: RequestInit){
+    return http.stream('/api/chat', {
       method: 'POST',
-      body: { message } 
+      body: { message },
+      ...options
     });
   }
 

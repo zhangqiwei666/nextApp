@@ -128,9 +128,22 @@ async function request<T = unknown>(
   }
 
   // 8. 超时控制
-  const controller = new AbortController();
-  fetchConfig.signal = controller.signal;
-  const timeoutId = setTimeout(() => controller.abort(), timeout);
+  const internalController = new AbortController();
+  const timeoutId = setTimeout(() => internalController.abort(), timeout);
+
+  // 如果外部传入了 signal，需要合并处理，否则会被内部超时控制覆盖
+  if (config.signal) {
+    // 优先使用现代标准的 AbortSignal.any ([internal, external])
+    if (typeof AbortSignal !== 'undefined' && 'any' in AbortSignal) {
+      fetchConfig.signal = (AbortSignal as any).any([internalController.signal, config.signal]);
+    } else {
+      // 兼容逻辑：外部取消时，手动触发内部取消
+      config.signal.addEventListener('abort', () => internalController.abort());
+      fetchConfig.signal = internalController.signal;
+    }
+  } else {
+    fetchConfig.signal = internalController.signal;
+  }
 
   try {
     let response = await fetch(fullUrl, fetchConfig);

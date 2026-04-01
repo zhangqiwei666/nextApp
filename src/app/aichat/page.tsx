@@ -228,7 +228,9 @@ export default function AIChatPage() {
         //   body: JSON.stringify({ messages: chatMessages }),
         //   signal: controller.signal,
         // });
-        const response = await hotTopicsApi.getChat(allMessages[allMessages.length - 1].content)
+        const response = await hotTopicsApi.getChat(allMessages[allMessages.length - 1].content, {
+          signal: controller.signal,
+        })
 
         if (!response.ok) {
           const errorText = await response.text().catch(() => "请求失败");
