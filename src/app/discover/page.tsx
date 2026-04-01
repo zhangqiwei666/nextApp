@@ -1,6 +1,7 @@
-import BottomNav from "../components/BottomNav";
+import BottomNav from "@/components/BottomNav";
 import Link from "next/link";
-import { hotTopicsApi, HotTopic } from "../api/api";
+import Image from "next/image";
+import { hotTopicsApi, HotTopic } from "@/api/api";
 
 // ============================================================
 // 🟢 SSR — Server Component（服务端渲染）
@@ -119,7 +120,7 @@ export default async function DiscoverPage() {
 
       {/* 热榜列表 —— 数据在服务端已渲染好 HTML，到达浏览器时内容完整 */}
       <div className="divide-y divide-gray-50">
-        {response.data?.map((topic) => (
+        {response.data?.map((topic, index) => (
           <article key={topic.id} className="px-4 py-3.5 flex gap-3 hover:bg-gray-50/80 transition-colors cursor-pointer group">
             {/* 排名 */}
             <div className="flex-shrink-0 w-7 pt-0.5">
@@ -173,10 +174,12 @@ export default async function DiscoverPage() {
 
             {/* 图片 */}
             <div className="flex-shrink-0 w-[88px] h-[66px] rounded-lg overflow-hidden">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
+              <Image
                 src={topic.image}
                 alt={topic.title}
+                width={88}
+                height={66}
+                priority={index === 0}
                 className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
               />
             </div>

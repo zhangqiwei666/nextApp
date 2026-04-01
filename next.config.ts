@@ -9,6 +9,13 @@ const nextConfig: NextConfig = {
   // 2. 自定义构建输出目录（默认是 .next）
   // distDir: 'build', // 若修改，启动生产环境需加 --dir build
 
+  images: {
+    remotePatterns: [
+      { protocol: "https", hostname: "**" },
+      { protocol: "http", hostname: "**" },
+    ],
+  },
+
   // ===================== 静态/动态渲染相关 =====================
   // 1. 默认渲染模式（App Router）
   // 优先静态渲染，动态路由自动降级为动态渲染

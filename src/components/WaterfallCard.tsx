@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
 
 interface CardData {
   id: number;
@@ -53,12 +54,12 @@ export default function WaterfallCard({ data, index }: WaterfallCardProps) {
           className="relative w-full overflow-hidden"
           style={{ aspectRatio: `1 / ${data.aspectRatio}` }}
         >
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
+          <Image
             src={data.image}
             alt={data.title}
-            className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-            loading="lazy"
+            fill
+            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+            className="object-cover transition-transform duration-500 group-hover:scale-105"
           />
 
           {/* Video play button */}
@@ -103,12 +104,13 @@ export default function WaterfallCard({ data, index }: WaterfallCardProps) {
           {/* Author & Likes */}
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-1.5 min-w-0 flex-1">
-              <div className="w-[18px] h-[18px] rounded-full overflow-hidden flex-shrink-0 ring-1 ring-gray-100">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
+              <div className="relative w-[18px] h-[18px] rounded-full overflow-hidden flex-shrink-0 ring-1 ring-gray-100">
+                <Image
                   src={data.avatar}
                   alt={data.author}
-                  className="w-full h-full object-cover"
+                  fill
+                  sizes="18px"
+                  className="object-cover"
                 />
               </div>
               <span className="text-[11px] text-gray-400 truncate">{data.author}</span>

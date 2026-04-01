@@ -4,7 +4,7 @@
 // ============================================================
 
 import http from './request';
-import type { CardData } from "../components/WaterfallCard";
+import type { CardData } from "@/components/WaterfallCard";
 // ==================== 类型定义 ====================
 
 export interface HotTopic {

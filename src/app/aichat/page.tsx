@@ -2,7 +2,7 @@
 
 import { useState, useRef, useEffect, useCallback } from "react";
 import Link from "next/link";
-import {hotTopicsApi} from '../api/api'
+import { hotTopicsApi } from "@/api/api";
 import { Sparkles, Xmark, Plus, Ghost, Comment, TrashBin, ChevronLeft, Clock, Stop, PaperPlane } from '@gravity-ui/icons';
 
 /* ───────── Types ───────── */
@@ -479,7 +479,16 @@ export default function AIChatPage() {
     {}
   );
 
-  if (!mounted) return null;
+  if (!mounted) {
+    return (
+      <div
+        className="h-dvh max-w-lg mx-auto flex flex-col items-center justify-center bg-gray-50"
+        style={{ background: "linear-gradient(180deg, #f8f7ff 0%, #f3f4f6 100%)" }}
+      >
+        <div className="w-8 h-8 rounded-full border-2 border-purple-500 border-t-transparent animate-spin"></div>
+      </div>
+    );
+  }
 
   /* ═══════════════════════════════════════════
      Render

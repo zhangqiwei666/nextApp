@@ -148,11 +148,11 @@ async function request<T = unknown>(
       if (response.status === 401 || response.status === 403) {
         const msg = (errorData as { message?: string }).message || '登录已失效，请重新登录';
         if (typeof window !== 'undefined') {
-          // 客户端：清除无效 token，改为交给调用方处理
+          // 客户端：清除无效 token
           localStorage.removeItem('token');
           const currentUrl = encodeURIComponent(window.location.pathname + window.location.search);
           window.location.href = `/login?error=${encodeURIComponent(msg)}&redirect=${currentUrl}`;
-           return undefined as T;
+          return { data: [] as any, code: response.status, message: msg } as T;
         }else {
           // 服务端（SSR）：由于服务端没有 window 对象，可后续在中间件 (middleware) 处理重定向源路径
           const { redirect } = await import('next/navigation');
@@ -184,10 +184,14 @@ async function request<T = unknown>(
     // 12. 如果后端返回了统一的 { code, data, message } 结构
     //     可以在这里统一处理业务错误码
     if (data && typeof data === 'object' && 'code' in data) {
-     if (data.code !== 200) {
+      if (data.code !== 200) {
         throw new BusinessError(data.code, data.message, data.data);
       }
-      // 返回完整响应对象（调用方的泛型    应为完整响应类型，如 HotTopicsResponse）
+      // 防御性编程：针对部分接口成功 200 但没有下发 data 层，强制兜底
+      if (!('data' in data) || data.data === null) {
+        data.data = [];
+      }
+      // 返回完整响应对象
       return data as T;
     }
 
@@ -338,7 +342,7 @@ export default http;
 ========================================
 
 "use client";
-import http from '@/app/lib/request';
+import http from '@/lib/request';
 
 interface HotTopic {
   id: number;
@@ -370,7 +374,7 @@ export default function MyPage() {
 📌 示例 2：服务端组件（SSR）中使用
 ========================================
 
-import http from '@/app/lib/request';
+import http from '@/lib/request';
 
 export default async function DiscoverPage() {
   // 动态渲染（每次请求都获取最新数据）

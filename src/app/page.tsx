@@ -1,9 +1,9 @@
-import Header from "./components/Header";
-import CategoryTabs from "./components/CategoryTabs";
-import BottomNav from "./components/BottomNav";
-import WaterfallCard from "./components/WaterfallCard";
-import type { CardData } from "./components/WaterfallCard";
-import { hotTopicsApi } from  './api/api'
+import Header from "@/components/Header";
+import CategoryTabs from "@/components/CategoryTabs";
+import BottomNav from "@/components/BottomNav";
+import WaterfallCard from "@/components/WaterfallCard";
+import type { CardData } from "@/components/WaterfallCard";
+import { hotTopicsApi } from  '@/api/api'
 import { Metadata } from 'next';
 
 // 导出元数据对象 📄

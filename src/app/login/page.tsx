@@ -3,8 +3,8 @@
 import { useState } from "react";
 import {Eye, EyeSlash} from "@gravity-ui/icons";
 import {Button, FieldError, Form, Input, TextField, InputGroup, toast} from "@heroui/react";
-import {userApi} from '../api/login'
-import { HttpError} from '../api/request';
+import {userApi} from '@/api/login'
+import { HttpError} from '@/api/request';
 // import { cookies } from 'next/headers';
 export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);

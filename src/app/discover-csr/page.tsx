@@ -1,9 +1,10 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
-import BottomNav from "../components/BottomNav";
+import BottomNav from "@/components/BottomNav";
 import Link from "next/link";
-import { hotTopicsApi, type HotTopic } from "../api/api";
+import Image from "next/image";
+import { hotTopicsApi, type HotTopic } from "@/api/api";
 
 // ============================================================
 // 🔴 CSR — Client Component（客户端渲染）
@@ -39,7 +40,11 @@ export default function DiscoverCSRPage() {
     console.log("[CSR Client] 开始在浏览器端请求数据...");
     // ✅ 使用封装后的 API，自动处理 baseURL、错误、超时
     try {
-      const { data, code } = await hotTopicsApi.getTopics();
+      const res = await hotTopicsApi.getTopics();
+      if (!res) {
+        throw new Error("Empty response from API");
+      }
+      const { data, code } = res;
       const duration = Date.now() - start;
       if (code === 200) {
         console.log(
@@ -172,7 +177,7 @@ export default function DiscoverCSRPage() {
           </>
         ) : (
           // ===== 数据加载完成后显示内容 =====
-          topics.map((topic) => (
+          topics.map((topic, index) => (
             <article key={topic.id} className="px-4 py-3.5 flex gap-3 hover:bg-gray-50/80 transition-colors cursor-pointer group">
               {/* 排名 */}
               <div className="flex-shrink-0 w-7 pt-0.5">
@@ -225,10 +230,12 @@ export default function DiscoverCSRPage() {
 
               {/* 图片 */}
               <div className="flex-shrink-0 w-[88px] h-[66px] rounded-lg overflow-hidden">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
+                <Image
                   src={topic.image}
                   alt={topic.title}
+                  width={88}
+                  height={66}
+                  priority={index === 0}
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                 />
               </div>
