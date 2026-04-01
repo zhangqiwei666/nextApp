@@ -808,7 +808,7 @@ export default function AIChatPage() {
         }}
       >
         <div
-          className="flex items-end gap-2.5 px-4 py-2.5"
+          className="flex items-center gap-2.5 px-4 py-2.5"
           style={{
             background: "#fff",
             borderRadius: "24px",
