@@ -96,7 +96,7 @@ export default function DiscoverCSRPage() {
 
       {/* ===== CSR 信息面板 ===== */}
       <div className="mx-4 mt-3 mb-2">
-        <div className="px-4 py-3 bg-gradient-to-r from-orange-50 via-red-50 to-pink-50 rounded-xl border border-orange-200 shadow-sm">
+        <div className="px-4 py-3 bg-linear-to-r from-orange-50 via-red-50 to-pink-50 rounded-xl border border-orange-200 shadow-sm">
           <div className="flex items-center gap-2 mb-2">
             <span className="flex h-2.5 w-2.5 relative">
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-orange-400 opacity-75"></span>
@@ -118,7 +118,7 @@ export default function DiscoverCSRPage() {
         {/* 跳转到 SSR 版本 */}
         <Link
           href="/discover"
-          className="block mt-2 px-4 py-2.5 bg-gradient-to-r from-emerald-500 to-teal-500 text-white text-center text-sm font-bold rounded-xl shadow-lg shadow-emerald-500/20 hover:shadow-emerald-500/40 transition-all duration-300 hover:scale-[1.02] no-underline"
+          className="block mt-2 px-4 py-2.5 bg-linear-to-r from-emerald-500 to-teal-500 text-white text-center text-sm font-bold rounded-xl shadow-lg shadow-emerald-500/20 hover:shadow-emerald-500/40 transition-all duration-300 hover:scale-[1.02] no-underline"
         >
           👈 点击查看 SSR 服务端渲染版本 — 感受区别
         </Link>
@@ -150,7 +150,7 @@ export default function DiscoverCSRPage() {
           <>
             {Array.from({ length: 8 }).map((_, i) => (
               <div key={i} className="px-4 py-3.5 flex gap-3 animate-pulse">
-                <div className="flex-shrink-0 w-7 pt-0.5">
+                <div className="shrink-0 w-7 pt-0.5">
                   <div className="w-6 h-6 bg-gray-200 rounded"></div>
                 </div>
                 <div className="flex-1">
@@ -162,7 +162,7 @@ export default function DiscoverCSRPage() {
                     <div className="h-4 bg-gray-100 rounded w-8"></div>
                   </div>
                 </div>
-                <div className="flex-shrink-0 w-[88px] h-[66px] bg-gray-200 rounded-lg"></div>
+                <div className="shrink-0 w-[88px] h-[66px] bg-gray-200 rounded-lg"></div>
               </div>
             ))}
             <div className="text-center py-6">
@@ -180,7 +180,7 @@ export default function DiscoverCSRPage() {
           topics.map((topic, index) => (
             <article key={topic.id} className="px-4 py-3.5 flex gap-3 hover:bg-gray-50/80 transition-colors cursor-pointer group">
               {/* 排名 */}
-              <div className="flex-shrink-0 w-7 pt-0.5">
+              <div className="shrink-0 w-7 pt-0.5">
                 <span
                   className={`text-lg font-black leading-none ${topic.rank <= 3
                       ? topic.rank === 1
@@ -229,7 +229,7 @@ export default function DiscoverCSRPage() {
               </div>
 
               {/* 图片 */}
-              <div className="flex-shrink-0 w-[88px] h-[66px] rounded-lg overflow-hidden">
+              <div className="shrink-0 w-[88px] h-[66px] rounded-lg overflow-hidden">
                 <Image
                   src={topic.image}
                   alt={topic.title}

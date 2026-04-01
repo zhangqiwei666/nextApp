@@ -43,13 +43,13 @@ export default async function HomePage() {
           {/* Left Column */}
           <div className="flex-1 flex flex-col">
             {leftCards.map((card, i) => (
-              <WaterfallCard key={card.id} data={card} index={i * 2} />
+              <WaterfallCard key={card.id} data={card} index={i * 2} priority={i * 2 < 4} />
             ))}
           </div>
           {/* Right Column */}
           <div className="flex-1 flex flex-col">
             {rightCards.map((card, i) => (
-              <WaterfallCard key={card.id} data={card} index={i * 2 + 1} />
+              <WaterfallCard key={card.id} data={card} index={i * 2 + 1} priority={i * 2 + 1 < 4} />
             ))}
           </div>
         </div>

@@ -3,7 +3,8 @@
 import { useState, useRef, useEffect, useCallback } from "react";
 import Link from "next/link";
 import { hotTopicsApi } from "@/api/api";
-import { Sparkles, Xmark, Plus, Ghost, Comment, TrashBin, ChevronLeft, Clock, Stop, PaperPlane } from '@gravity-ui/icons';
+import { Sparkles, Xmark, Plus, Ghost, Comment, TrashBin, ChevronLeft, Clock, Stop, PaperPlane, ArrowDown } from '@gravity-ui/icons';
+import MarkdownRenderer from "@/components/MarkdownRenderer";
 
 /* ───────── Types ───────── */
 interface Message {
@@ -86,8 +87,11 @@ export default function AIChatPage() {
   const [mounted, setMounted] = useState(false);
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
   const abortControllerRef = useRef<AbortController | null>(null);
+  const [showScrollBtn, setShowScrollBtn] = useState(false);
+  const [autoScroll, setAutoScroll] = useState(true);
 
   /* ── derived ── */
   const activeSession = sessions.find((s) => s.id === activeId) ?? null;
@@ -117,9 +121,23 @@ export default function AIChatPage() {
   }, [activeId, mounted]);
 
   /* ── scroll to bottom ── */
+  const scrollToBottom = useCallback((behavior: ScrollBehavior = "smooth") => {
+    messagesEndRef.current?.scrollIntoView({ behavior });
+  }, []);
+
+  // 监听滚动，决定是否开启自动滚动
+  const handleScroll = (e: React.UIEvent<HTMLDivElement>) => {
+    const target = e.currentTarget;
+    const isAtBottom = target.scrollHeight - target.scrollTop <= target.clientHeight + 100;
+    setAutoScroll(isAtBottom);
+    setShowScrollBtn(!isAtBottom);
+  };
+
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [messages, isTyping, isStreaming]);
+    if (autoScroll) {
+      scrollToBottom();
+    }
+  }, [messages, isTyping, isStreaming, autoScroll, scrollToBottom]);
 
   /* ── helpers ── */
   const createSession = useCallback((): string => {
@@ -567,39 +585,39 @@ export default function AIChatPage() {
                 <span className="text-[11px] font-semibold text-gray-300 uppercase tracking-wider">{date}</span>
               </div>
               {items.map((s) => (
-                <div
-                  key={s.id}
-                  onClick={() => { setActiveId(s.id); setDrawerOpen(false); }}
-                  className="group flex items-center gap-3 mb-1.5 px-3 py-3 rounded-2xl cursor-pointer transition-all duration-200 active:scale-[0.97]"
-                  style={{
-                    background: s.id === activeId ? "linear-gradient(135deg, rgba(124,58,237,0.08), rgba(59,130,246,0.06))" : "transparent",
-                    border: s.id === activeId ? "1px solid rgba(124,58,237,0.15)" : "1px solid transparent",
-                  }}
-                >
-                  {/* icon */}
                   <div
-                    className="w-10 h-10 rounded-xl flex-shrink-0 flex items-center justify-center"
+                    key={s.id}
+                    onClick={() => { setActiveId(s.id); setDrawerOpen(false); }}
+                    className="group flex items-center gap-3 mb-1.5 px-3 py-3 rounded-2xl cursor-pointer transition-all duration-200 active:scale-[0.97]"
                     style={{
-                      background: s.id === activeId ? "linear-gradient(135deg, #7c3aed, #3b82f6)" : "rgba(0,0,0,0.04)",
+                      background: s.id === activeId ? "linear-gradient(135deg, rgba(124,58,237,0.08), rgba(59,130,246,0.06))" : "transparent",
+                      border: s.id === activeId ? "1px solid rgba(124,58,237,0.15)" : "1px solid transparent",
                     }}
                   >
-                    <Comment width={20} height={20} style={{ color: s.id === activeId ? "#fff" : "#9ca3af" }} />
-                  </div>
-                  {/* title + count */}
-                  <div className="flex-1 min-w-0">
-                    <p
-                      className="text-[13px] truncate leading-tight"
+                    {/* icon */}
+                    <div
+                      className="w-10 h-10 rounded-xl shrink-0 flex items-center justify-center"
                       style={{
-                        fontWeight: s.id === activeId ? 600 : 400,
-                        color: s.id === activeId ? "#6d28d9" : "#374151",
+                        background: s.id === activeId ? "linear-gradient(135deg, #7c3aed, #3b82f6)" : "rgba(0,0,0,0.04)",
                       }}
                     >
-                      {s.title}
-                    </p>
-                    <p className="text-[11px] mt-1" style={{ color: "#9ca3af" }}>
-                      {s.messages.length} 条消息
-                    </p>
-                  </div>
+                      <Comment width={20} height={20} style={{ color: s.id === activeId ? "#fff" : "#9ca3af" }} />
+                    </div>
+                    {/* title + count */}
+                    <div className="flex-1 min-w-0">
+                      <p
+                        className="text-[13px] truncate leading-tight"
+                        style={{
+                          fontWeight: s.id === activeId ? 600 : 400,
+                          color: s.id === activeId ? "#6d28d9" : "#374151",
+                        }}
+                      >
+                        {s.title}
+                      </p>
+                      <p className="text-[11px] mt-1" style={{ color: "#9ca3af" }}>
+                        {s.messages.length} 条消息
+                      </p>
+                    </div>
                   {/* delete — always visible on mobile (touch) */}
                   <button
                     onClick={(e) => { e.stopPropagation(); deleteSession(s.id); }}
@@ -682,6 +700,8 @@ export default function AIChatPage() {
 
       {/* ─── Messages Area ─── */}
       <div
+        ref={scrollContainerRef}
+        onScroll={handleScroll}
         className="flex-1 overflow-y-auto px-4 py-5 space-y-5"
         style={{ WebkitOverflowScrolling: "touch" }}
       >
@@ -724,39 +744,45 @@ export default function AIChatPage() {
         )}
 
         {/* Message bubbles */}
-        {messages.map((msg) => (
+        {messages.map((msg, index) => (
           <div
             key={msg.id}
             className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"} animate-fade-in-up`}
           >
             {msg.role === "assistant" && (
               <div
-                className="w-8 h-8 rounded-xl flex-shrink-0 flex items-center justify-center mr-2.5 mt-0.5"
+                className="w-8 h-8 rounded-xl shrink-0 flex items-center justify-center mr-2.5 mt-0.5"
                 style={{ background: "linear-gradient(135deg, #7c3aed, #3b82f6)" }}
               >
                 <SparkleIcon className="w-4 h-4 text-white" />
               </div>
             )}
             <div
-              className="max-w-[78%] px-4 py-3 text-[14px] leading-relaxed whitespace-pre-wrap"
+              className={`max-w-[85%] px-4 py-3 text-[14px] leading-relaxed transition-all duration-300 ${
+                msg.role === "user" ? "shadow-md" : "border border-gray-100 shadow-sm"
+              }`}
               style={
                 msg.role === "user"
                   ? {
                       background: "linear-gradient(135deg, #7c3aed, #6366f1, #3b82f6)",
                       color: "#fff",
                       borderRadius: "20px 20px 6px 20px",
-                      boxShadow: "0 4px 16px rgba(124,58,237,0.2)",
                     }
                   : {
                       background: "#fff",
                       color: "#374151",
                       borderRadius: "20px 20px 20px 6px",
-                      border: "1px solid rgba(0,0,0,0.05)",
-                      boxShadow: "0 1px 4px rgba(0,0,0,0.04)",
                     }
               }
             >
-              {msg.content}
+              {msg.role === "assistant" ? (
+                <MarkdownRenderer 
+                  content={msg.content} 
+                  isStreaming={isStreaming && index === (activeSession?.messages.length ?? 0) - 1} 
+                />
+              ) : (
+                <div className="whitespace-pre-wrap">{msg.content}</div>
+              )}
             </div>
           </div>
         ))}
@@ -765,7 +791,7 @@ export default function AIChatPage() {
         {isTyping && (
           <div className="flex justify-start animate-fade-in-up">
             <div
-              className="w-8 h-8 rounded-xl flex-shrink-0 flex items-center justify-center mr-2.5 mt-0.5"
+              className="w-8 h-8 rounded-xl shrink-0 flex items-center justify-center mr-2.5 mt-0.5"
               style={{ background: "linear-gradient(135deg, #7c3aed, #3b82f6)" }}
             >
               <SparkleIcon className="w-4 h-4 text-white" />
@@ -809,6 +835,16 @@ export default function AIChatPage() {
 
         <div ref={messagesEndRef} />
       </div>
+
+      {/* Floating scroll down button */}
+      {showScrollBtn && (
+        <button
+          onClick={() => scrollToBottom()}
+          className="absolute bottom-28 right-6 w-10 h-10 rounded-full flex items-center justify-center bg-white shadow-xl border border-gray-100 text-purple-600 transition-all duration-300 animate-in fade-in zoom-in active:scale-90 z-30"
+        >
+          <ArrowDown width={18} height={18} />
+        </button>
+      )}
 
       {/* ─── Input Area ─── */}
       <div

@@ -79,7 +79,7 @@ export default async function DiscoverPage() {
 
       {/* ===== SSR 信息面板 ===== */}
       <div className="mx-4 mt-3 mb-2">
-        <div className="px-4 py-3 bg-gradient-to-r from-emerald-50 via-green-50 to-teal-50 rounded-xl border border-emerald-200 shadow-sm">
+        <div className="px-4 py-3 bg-linear-to-r from-emerald-50 via-green-50 to-teal-50 rounded-xl border border-emerald-200 shadow-sm">
           <div className="flex items-center gap-2 mb-2">
             <span className="flex h-2.5 w-2.5 relative">
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
@@ -101,7 +101,7 @@ export default async function DiscoverPage() {
         {/* 跳转到 CSR 对比版本 */}
         <Link
           href="/discover-csr"
-          className="block mt-2 px-4 py-2.5 bg-gradient-to-r from-orange-500 to-red-500 text-white text-center text-sm font-bold rounded-xl shadow-lg shadow-red-500/20 hover:shadow-red-500/40 transition-all duration-300 hover:scale-[1.02] no-underline"
+          className="block mt-2 px-4 py-2.5 bg-linear-to-r from-orange-500 to-red-500 text-white text-center text-sm font-bold rounded-xl shadow-lg shadow-red-500/20 hover:shadow-red-500/40 transition-all duration-300 hover:scale-[1.02] no-underline"
         >
           👉 点击查看 CSR 客户端渲染版本 — 感受区别
         </Link>
@@ -123,7 +123,7 @@ export default async function DiscoverPage() {
         {response.data?.map((topic, index) => (
           <article key={topic.id} className="px-4 py-3.5 flex gap-3 hover:bg-gray-50/80 transition-colors cursor-pointer group">
             {/* 排名 */}
-            <div className="flex-shrink-0 w-7 pt-0.5">
+            <div className="shrink-0 w-7 pt-0.5">
               <span
                 className={`text-lg font-black leading-none ${
                   topic.rank <= 3
@@ -173,7 +173,7 @@ export default async function DiscoverPage() {
             </div>
 
             {/* 图片 */}
-            <div className="flex-shrink-0 w-[88px] h-[66px] rounded-lg overflow-hidden">
+            <div className="shrink-0 w-[88px] h-[66px] rounded-lg overflow-hidden">
               <Image
                 src={topic.image}
                 alt={topic.title}

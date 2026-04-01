@@ -19,9 +19,10 @@ interface CardData {
 interface WaterfallCardProps {
   data: CardData;
   index: number;
+  priority?: boolean;
 }
 
-export default function WaterfallCard({ data, index }: WaterfallCardProps) {
+export default function WaterfallCard({ data, index, priority = false }: WaterfallCardProps) {
   const [liked, setLiked] = useState(false);
   const [likeCount, setLikeCount] = useState(data.likes);
 
@@ -58,6 +59,7 @@ export default function WaterfallCard({ data, index }: WaterfallCardProps) {
             src={data.image}
             alt={data.title}
             fill
+            priority={priority}
             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
             className="object-cover transition-transform duration-500 group-hover:scale-105"
           />
@@ -73,7 +75,7 @@ export default function WaterfallCard({ data, index }: WaterfallCardProps) {
 
           {/* Overlay text */}
           {data.overlay && (
-            <div className="absolute bottom-0 left-0 right-0 p-3 bg-gradient-to-t from-black/70 via-black/30 to-transparent">
+            <div className="absolute bottom-0 left-0 right-0 p-3 bg-linear-to-t from-black/70 via-black/30 to-transparent">
               <p className="text-white text-[11px] font-bold leading-snug drop-shadow-lg whitespace-pre-line">
                 {data.overlay}
               </p>
@@ -104,7 +106,7 @@ export default function WaterfallCard({ data, index }: WaterfallCardProps) {
           {/* Author & Likes */}
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-1.5 min-w-0 flex-1">
-              <div className="relative w-[18px] h-[18px] rounded-full overflow-hidden flex-shrink-0 ring-1 ring-gray-100">
+              <div className="relative w-[18px] h-[18px] rounded-full overflow-hidden shrink-0 ring-1 ring-gray-100">
                 <Image
                   src={data.avatar}
                   alt={data.author}
@@ -118,7 +120,7 @@ export default function WaterfallCard({ data, index }: WaterfallCardProps) {
 
             <button
               onClick={handleLike}
-              className={`flex items-center gap-0.5 transition-all duration-200 active:scale-90 flex-shrink-0 ml-1 ${
+              className={`flex items-center gap-0.5 transition-all duration-200 active:scale-90 shrink-0 ml-1 ${
                 liked ? "text-xhs-red" : "text-gray-400"
               }`}
             >
