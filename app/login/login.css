@@ -5,7 +5,7 @@
 }
 .content .login-box {
     width: 320px;
-    height: 300px;
+    /* height: 300px; */
     position: absolute;
     top: 50%;   
     left: 50%;

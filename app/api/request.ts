@@ -20,6 +20,8 @@ interface RequestConfig extends Omit<RequestInit, 'body'> {
   showError?: boolean;
   /** 自定义基础路径，覆盖默认值 */
   baseURL?: string;
+  /** 返回值类型，默认为 json。如果设为 stream，则返回原生的 Response 对象 */
+  responseType?: 'json' | 'stream';
 }
 
 /** 拦截器 */
@@ -62,6 +64,7 @@ async function request<T = unknown>(
     body,
     showError = true,
     baseURL,
+    responseType = 'json',
     headers: customHeaders,
     ...restConfig
   } = config;
@@ -170,6 +173,11 @@ async function request<T = unknown>(
       );
     }
 
+    // [新增] 如果配置了流模式，且请求成功，直接返回 Response 实例给业务侧去读取 reader
+    if (responseType === 'stream') {
+       return response as unknown as T;
+    }
+
     // 11. 解析响应
     const data = await response.json();
     
@@ -261,6 +269,18 @@ const http = {
   /** DELETE 请求 */
   delete<T = unknown>(url: string, config?: RequestConfig) {
     return request<T>(url, { ...config, method: 'DELETE' });
+  },
+
+  /** 流式请求 (SSE) - 返回原生 Response 以便读取 stream */
+  stream(url: string, config?: RequestConfig) {
+    return request<Response>(url, {
+      ...config,
+      responseType: 'stream',
+      headers: {
+        'Accept': 'text/event-stream',
+        ...config?.headers,
+      },
+    });
   },
 
   // ==================== SSR 专用方法 ====================

@@ -31,6 +31,13 @@ export interface HomeListResponse {
   code: number;
 }
 
+
+export interface ChatResponse {
+  data: string;
+  message: string;
+  code: number;
+}
+
 // ==================== 热搜相关接口 ====================
 
 export const hotTopicsApi = {
@@ -57,7 +64,15 @@ export const hotTopicsApi = {
     return http.ssrGet<HomeListResponse>('/api/feedData', undefined, {
       revalidate: 'no-store',
     })
+  },
+
+  getChat(message: string){
+    return http.stream('/api/chat', { 
+      method: 'POST',
+      body: { message } 
+    });
   }
+
 };
 
 // ==================== 用户相关接口（示例） ====================
