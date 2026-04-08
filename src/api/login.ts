@@ -16,6 +16,10 @@ export interface Response {
 interface LoginResponse {
   data: {
     token?: string;
+    user:{
+      username: string;
+      email: string;
+    }
     message?: string;
   };
   message: string;
@@ -31,9 +35,14 @@ export interface User {
 }
 
 export const userApi = {
+  // // 获取用户信息
+  // getProfile() {
+  //   return http.get<Response>('/api/user/profile');
+  // },
+  
   // 获取用户信息
-  getProfile() {
-    return http.get<Response>('/api/user/profile');
+  getuserInfo(username:string) {
+    return http.get<Response>('/api/user/info', {username});
   },
 
   // 更新用户信息

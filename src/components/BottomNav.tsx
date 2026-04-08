@@ -37,7 +37,7 @@ const navItems = [
     href: "/aichat",
     isCenter: true,
     icon: () => (
-      <div className="w-11 h-8 bg-gradient-to-r from-violet-500 to-blue-500 rounded-xl flex items-center justify-center shadow-lg shadow-violet-500/30 hover:shadow-violet-500/50 transition-shadow duration-300">
+      <div className="w-11 h-8 bg-linear-to-r from-violet-500 to-blue-500 rounded-xl flex items-center justify-center shadow-lg shadow-violet-500/30 hover:shadow-violet-500/50 transition-shadow duration-300">
         <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" strokeWidth={1.8} stroke="currentColor">
           <path strokeLinecap="round" strokeLinejoin="round" d="M9.813 15.904 9 18.75l-.813-2.846a4.5 4.5 0 0 0-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 0 0 3.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 0 0 3.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 0 0-3.09 3.09ZM18.259 8.715 18 9.75l-.259-1.035a3.375 3.375 0 0 0-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 0 0 2.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 0 0 2.455 2.456L21.75 6l-1.036.259a3.375 3.375 0 0 0-2.455 2.456ZM16.894 20.567 16.5 21.75l-.394-1.183a2.25 2.25 0 0 0-1.423-1.423L13.5 18.75l1.183-.394a2.25 2.25 0 0 0 1.423-1.423l.394-1.183.394 1.183a2.25 2.25 0 0 0 1.423 1.423l1.183.394-1.183.394a2.25 2.25 0 0 0-1.423 1.423Z" />
         </svg>
@@ -55,7 +55,7 @@ const navItems = [
   },
   {
     label: "我",
-    href: "#",
+    href: "/me",
     icon: (active: boolean) => (
       <svg xmlns="http://www.w3.org/2000/svg" className="w-6 h-6" fill={active ? "currentColor" : "none"} viewBox="0 0 24 24" stroke="currentColor" strokeWidth={active ? 0 : 1.5}>
         <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />
@@ -79,7 +79,7 @@ export default function BottomNav() {
               href={item.href}
               prefetch={true}
               className={`
-                flex flex-col items-center gap-0.5 min-w-[3.5rem] py-1
+                flex flex-col items-center gap-0.5 min-w-14 py-1
                 transition-all duration-200 no-underline
                 ${isCenter ? "active:scale-90" : "active:scale-95"}
                 ${isActive && !isCenter ? "text-gray-900" : "text-gray-500"}

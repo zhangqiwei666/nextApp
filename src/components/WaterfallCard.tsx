@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Image from "next/image";
+import {hotTopicsApi} from '@/api/api'
 
 interface CardData {
   id: number;
@@ -26,14 +27,17 @@ export default function WaterfallCard({ data, index, priority = false }: Waterfa
   const [liked, setLiked] = useState(false);
   const [likeCount, setLikeCount] = useState(data.likes);
 
-  const handleLike = (e: React.MouseEvent) => {
+  const handleLike = async (e: React.MouseEvent) => {
     e.stopPropagation();
     if (liked) {
       setLikeCount((c) => c - 1);
     } else {
       setLikeCount((c) => c + 1);
-    }
+    }  
     setLiked(!liked);
+    // 点赞接口
+    const res = await hotTopicsApi.getHomeListLikes(data.id) 
+    console.log(res)
   };
 
   const formatLikes = (n: number) => {

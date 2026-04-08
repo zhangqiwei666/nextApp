@@ -38,6 +38,7 @@ export interface ChatResponse {
   code: number;
 }
 
+
 // ==================== 热搜相关接口 ====================
 
 export const hotTopicsApi = {
@@ -64,6 +65,10 @@ export const hotTopicsApi = {
     return http.ssrGet<HomeListResponse>('/api/feedData', undefined, {
       revalidate: 'no-store',
     })
+  },
+  // 点赞接口
+  getHomeListLikes(id: number) {
+    return http.post<HomeListResponse>('/api/feed/like', {id})
   },
 
   getChat(message: string, options?: RequestInit){

@@ -3,11 +3,15 @@
 import { useState } from "react";
 import {Eye, EyeSlash} from "@gravity-ui/icons";
 import {Button, FieldError, Form, Input, TextField, InputGroup, toast} from "@heroui/react";
-import {userApi} from '@/api/login'
+import {userApi} from '@/api/login';
 import { HttpError} from '@/api/request';
+import { userInfoStore } from '@/store/user';
+
 // import { cookies } from 'next/headers';
 export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
+    // 获取 setInfo 方法
+  const setInfo = userInfoStore((state) => state.setInfo);
 
   const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -21,6 +25,7 @@ export default function LoginPage() {
     try {
       const { code, data } = await userApi.login(userInfo.username, userInfo.password);
       if (code === 200) {
+        setInfo(data.user)
         // 客户端存 localStorage（CSR 使用）
         localStorage.setItem('token', data.token || '');
         // 同时存 cookie（SSR 使用，服务端通过 cookies() 读取）
@@ -29,7 +34,7 @@ export default function LoginPage() {
         // 解析鉴权前的路径并跳转 (支持 redirect / from / callbackUrl 等常见参数名)
         const params = new URLSearchParams(window.location.search);
         let redirectUrl = params.get('redirect') || params.get('from') || params.get('callbackUrl') || '/';
-        
+        // 设置store
         // 防御性：如果 redirectURL 恰巧又是 /login 自己，强制跳转到 /，防止在登录页死循环
         if (redirectUrl.startsWith('/login')) {
           redirectUrl = '/';
