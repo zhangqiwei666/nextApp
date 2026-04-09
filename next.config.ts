@@ -54,7 +54,7 @@ const nextConfig: NextConfig = {
   //     // 动态路由：/blog/[slug] 不建议设长缓存，用 revalidate 控制
   //   },
   // },
-  // cacheComponents: true,
+  cacheComponents: true,  // 组件缓存  在文件级别使用时，所有函数导出都必须是异步函数。
   // cacheLife: {
   //     'discover': {
   //         expire: 10,
