@@ -63,7 +63,6 @@ export const hotTopicsApi = {
 
   getHomeList() {
     return http.ssrGet<HomeListResponse>('/api/feedData', undefined, {
-      revalidate: 'no-store',
     })
   },
   // 点赞接口

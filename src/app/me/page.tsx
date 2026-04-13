@@ -1,6 +1,7 @@
 "use client";
 import BottomNav from "@/components/BottomNav";
 import { userInfoStore } from '@/store/user';
+import Image from "next/image";
 
 export default function MePage() {
 
@@ -24,9 +25,9 @@ export default function MePage() {
       <div className="px-4 -mt-10 relative">
         <div className="w-full bg-white rounded-xl shadow-md p-6 flex flex-col items-center">
           <div className="w-24 h-24 rounded-full overflow-hidden bg-gray-200 ring-4 ring-white shadow-sm mb-4">
-            <img
-              src={info?.avatar || "https://api.dicebear.com/7.x/notionists/svg?seed=Felix"}
-              alt="Avatar" 
+            <Image
+              src="https://api.dicebear.com/7.x/notionists/svg?seed=Felix"
+              alt="Avatar" width={96} height={96}
               className="w-full h-full object-cover"
             />
           </div>

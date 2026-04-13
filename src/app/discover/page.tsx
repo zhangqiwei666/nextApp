@@ -13,26 +13,20 @@ import { hotTopicsApi, HotTopic } from "@/api/api";
 export default async function DiscoverPage() {
   // 🔑 关键区别：这里的 fetch 在 NODE.JS 服务端执行！
   // 浏览器完全看不到这个请求（Network 面板不会出现）
-  // eslint-disable-next-line react-hooks/purity
-  const startTime = Date.now();
   interface Response {
     data: Array<HotTopic>,
     value: string,
-    fetchDuration: number
   }
   // ✅ 使用封装后的 API，一行搞定
   const response:Response = {
     data: [],
     value: '',
-    fetchDuration: 0
   }
   try{
     const res = await hotTopicsApi.getTopicsSSR();
     const { data, code } = res;
     response.data = data
     if(code === 200) {
-      // eslint-disable-next-line react-hooks/purity
-      response.fetchDuration = Date.now() - startTime;
       response.value = new Date().toLocaleString("zh-CN", {
             timeZone: "Asia/Shanghai",
             year: "numeric",
@@ -42,10 +36,6 @@ export default async function DiscoverPage() {
             minute: "2-digit",
             second: "2-digit",
           });
-      // 这行 console.log 只会出现在 终端/服务端控制台 中！
-      console.log(
-        `[SSR Server] 发现页数据已在服务端获取，耗时 ${response.fetchDuration}ms，共 ${data.length} 条热搜`
-      );
     }
     
   }catch(error: unknown){
@@ -57,7 +47,6 @@ export default async function DiscoverPage() {
     }
     response.data = [];
     response.value = '';
-    response.fetchDuration = 0;
   }
   
 
@@ -90,10 +79,9 @@ export default async function DiscoverPage() {
             </span>
           </div>
           <div className="space-y-1.5 text-[12px] text-emerald-600">
-            <p>📌 数据在 <strong>Node.js 服务端</strong> 获取，耗时 <strong>{response.fetchDuration}ms</strong></p>
+            <p>📌 数据在 <strong>Node.js 服务端</strong> 获取，耗时 </p>
             <p>📌 服务端获取时间: <strong>{response.value}</strong></p>
             <p>📌 浏览器收到的是 <strong>完整的 HTML</strong>，无需二次请求</p>
-            <p>📌 查看 <strong>网页源代码</strong> 可以看到所有热搜数据</p>
             <p>📌 浏览器 Network 面板 <strong>没有</strong> /api/hot-topics 请求</p>
           </div>
         </div>
