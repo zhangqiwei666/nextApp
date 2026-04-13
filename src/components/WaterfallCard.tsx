@@ -2,10 +2,9 @@
 
 import { useState } from "react";
 import Image from "next/image";
-import {hotTopicsApi} from '@/api/api'
-
+import { likeTopicAction } from "@/actions/feed.action";
 interface CardData {
-  id: number;
+  _id: string;
   image: string;
   title: string;
   author: string;
@@ -34,10 +33,12 @@ export default function WaterfallCard({ data, index, priority = false }: Waterfa
     } else {
       setLikeCount((c) => c + 1);
     }  
-    setLiked(!liked);
-    // 点赞接口
-    const res = await hotTopicsApi.getHomeListLikes(data.id) 
-    console.log(res)
+    
+    // Call server action
+    const newLikeState = !liked;
+    setLiked(newLikeState);
+    const res = await likeTopicAction(data._id, newLikeState);
+    console.log(res);
   };
 
   const formatLikes = (n: number) => {

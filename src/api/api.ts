@@ -8,7 +8,7 @@ import type { CardData } from "@/components/WaterfallCard";
 // ==================== 类型定义 ====================
 
 export interface HotTopic {
-  id: number;
+  _id: string;
   rank: number;
   title: string;
   description: string;
@@ -67,7 +67,7 @@ export const hotTopicsApi = {
     })
   },
   // 点赞接口
-  getHomeListLikes(id: number) {
+  getHomeListLikes(id: string) {
     return http.post<HomeListResponse>('/api/feed/like', {id})
   },
 

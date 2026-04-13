@@ -38,9 +38,9 @@ interface Interceptors {
  * - 服务端组件（Node.js 环境）：必须使用完整 URL，因为没有浏览器上下文
  */
 function getBaseURL(): string {
-  // 服务端环境：需要完整 URL
+  // 服务端环境：需要完整 URL，现在项目是全栈，所以直接请求自身服务
   if (typeof window === 'undefined') {
-    return process.env.BACKEND_URL || 'http://localhost:3005';
+    return process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3005';
   }
   // 客户端环境：使用相对路径（浏览器自动处理）
   return '';

@@ -23,25 +23,8 @@ const nextConfig: NextConfig = {
 
   // standalone 模式下不要设置 assetPrefix，使用默认的绝对路径
 
-  // ===================== API 代理（rewrites） =====================
-  // 把前端的 /api/backend/xxx 请求代理到外部后端服务器
-  // 浏览器地址栏不变，相当于 Nginx 反向代理
-  async rewrites() {
-    return [
-      // 示例1：代理到外部后端（最常用）
-      // 前端请求 /api/discover/list → 实际请求 http://115.191.43.57/api/discover/list
-      {
-        source: '/api/:path*',
-        destination: `${process.env.BACKEND_URL || 'https://aiballs.cn/'}/api/:path*`,
-      },
-      // 示例2：代理特定路径
-      // 前端请求 /api/auth/login → http://auth-service:3001/auth/login
-      // {
-      //   source: '/api/auth/:path*',
-      //   destination: 'http://localhost:3001/auth/:path*',
-      // },
-    ];
-  },
+  // ===================== API 代理（已移除） =====================
+  // 项目已改造成全栈，无需使用反向代理。所有 /api 请求将由本地的 App Router API 接口直接处理。
 
   // ===================== 3. 缓存优化（16.20 新机制） =====================
   // 启用 Cache Components（替代旧 PPR，稳定版）
