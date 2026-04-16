@@ -3,7 +3,7 @@
 import { useState, useRef, useEffect, useCallback } from "react";
 import Link from "next/link";
 import { hotTopicsApi } from "@/api/api";
-import { Sparkles, Xmark, Plus, Ghost, Comment, TrashBin, ChevronLeft, Clock, Stop, PaperPlane, ArrowDown } from '@gravity-ui/icons';
+import { Sparkles, Xmark, Plus, Ghost, Comment, TrashBin, ChevronLeft, Clock, Stop, PaperPlane, ArrowDown, Paperclip } from '@gravity-ui/icons';
 import MarkdownRenderer from "@/components/MarkdownRenderer";
 
 /* ───────── Types ───────── */
@@ -85,10 +85,12 @@ export default function AIChatPage() {
   const [isStreaming, setIsStreaming] = useState(false);
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const abortControllerRef = useRef<AbortController | null>(null);
   const [showScrollBtn, setShowScrollBtn] = useState(false);
   const [autoScroll, setAutoScroll] = useState(true);
@@ -186,6 +188,19 @@ export default function AIChatPage() {
     setInput(e.target.value);
     e.target.style.height = "auto";
     e.target.style.height = Math.min(e.target.scrollHeight, 120) + "px";
+  };
+
+  /* ── file change ── */
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setSelectedFile(file);
+    }
+    e.target.value = '';
+  };
+
+  const removeFile = () => {
+    setSelectedFile(null);
   };
 
   /* ── stop streaming ── */
@@ -396,7 +411,9 @@ export default function AIChatPage() {
   /* ── send message ── */
   const handleSend = useCallback(() => {
     const text = input.trim();
-    if (!text || isStreaming) return;
+    if ((!text && !selectedFile) || isStreaming) return;
+
+    const userContent = selectedFile && text ? `[文件: ${selectedFile.name}]\n${text}` : (selectedFile ? `[文件: ${selectedFile.name}]` : text);
 
     // 如果当前没有活跃会话则自动创建
     let sid = activeId;
@@ -405,7 +422,7 @@ export default function AIChatPage() {
       sid = generateId();
       const session: ChatSession = {
         id: sid,
-        title: extractTitle(text),
+        title: extractTitle(userContent),
         messages: [],
         createdAt: Date.now(),
         updatedAt: Date.now(),
@@ -421,16 +438,17 @@ export default function AIChatPage() {
     const userMsg: Message = {
       id: generateId(),
       role: "user",
-      content: text,
+      content: userContent,
       timestamp: Date.now(),
     };
 
     const allMessages = [...currentMessages, userMsg];
     updateSessionMessages(sid, (msgs) => [...msgs, userMsg]);
     setInput("");
+    setSelectedFile(null);
     if (inputRef.current) inputRef.current.style.height = "auto";
     fetchStreamReply(sid, allMessages);
-  }, [input, activeId, isStreaming, sessions, updateSessionMessages, fetchStreamReply]);
+  }, [input, selectedFile, activeId, isStreaming, sessions, updateSessionMessages, fetchStreamReply]);
 
   const handleQuickQuestion = useCallback(
     (q: string) => {
@@ -854,6 +872,23 @@ export default function AIChatPage() {
           background: "linear-gradient(180deg, transparent 0%, rgba(248,247,255,0.95) 20%, rgba(248,247,255,1) 100%)",
         }}
       >
+        {selectedFile && (
+          <div className="mx-4 mb-2 flex items-center gap-2 bg-white px-3 py-2 rounded-xl shadow-sm border border-gray-100 animate-in fade-in slide-in-from-bottom-2">
+            <div className="w-8 h-8 rounded-lg flex items-center justify-center" style={{ background: "rgba(59,130,246,0.1)", color: "#3b82f6" }}>
+              <Paperclip width={16} height={16} />
+            </div>
+            <div className="flex-1 min-w-0">
+              <p className="text-[13px] font-medium text-gray-700 truncate">{selectedFile.name}</p>
+              <p className="text-[11px] text-gray-400">{(selectedFile.size / 1024 / 1024).toFixed(2)} MB</p>
+            </div>
+            <button 
+              onClick={removeFile}
+              className="w-7 h-7 rounded-full flex items-center justify-center text-gray-400 hover:bg-gray-100 active:scale-95 transition-all"
+            >
+              <Xmark width={14} height={14} />
+            </button>
+          </div>
+        )}
         <div
           className="flex items-center gap-2.5 px-4 py-2.5"
           style={{
@@ -863,6 +898,20 @@ export default function AIChatPage() {
             boxShadow: "0 2px 12px rgba(0,0,0,0.06), 0 0 0 1px rgba(0,0,0,0.02)",
           }}
         >
+          <input 
+            type="file" 
+            ref={fileInputRef} 
+            onChange={handleFileChange} 
+            accept=".pdf,image/*" 
+            className="hidden" 
+          />
+          <button
+            onClick={() => fileInputRef.current?.click()}
+            className="flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center text-gray-500 transition-all duration-200 active:scale-90 hover:bg-gray-50"
+            title="导入文件"
+          >
+            <Paperclip width={18} height={18} />
+          </button>
           <textarea
             ref={inputRef}
             value={input}
@@ -875,14 +924,14 @@ export default function AIChatPage() {
           />
           <button
             onClick={handleSend}
-            disabled={!input.trim() || isStreaming}
+            disabled={(!input.trim() && !selectedFile) || isStreaming}
             className="flex-shrink-0 w-9 h-9 rounded-full flex items-center justify-center transition-all duration-200 active:scale-90"
             style={{
-              background: input.trim() && !isStreaming
+              background: (input.trim() || selectedFile) && !isStreaming
                 ? "linear-gradient(135deg, #7c3aed, #3b82f6)"
                 : "rgba(0,0,0,0.06)",
-              color: input.trim() && !isStreaming ? "#fff" : "#9ca3af",
-              boxShadow: input.trim() && !isStreaming
+              color: (input.trim() || selectedFile) && !isStreaming ? "#fff" : "#9ca3af",
+              boxShadow: (input.trim() || selectedFile) && !isStreaming
                 ? "0 4px 14px rgba(124,58,237,0.3)"
                 : "none",
             }}

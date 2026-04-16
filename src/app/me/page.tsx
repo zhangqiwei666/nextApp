@@ -1,12 +1,12 @@
 "use client";
 import BottomNav from "@/components/BottomNav";
-import { userInfoStore } from '@/store/user';
+import { useUserStore } from '@/store/user';
 import Image from "next/image";
 
 export default function MePage() {
 
-  // 获取 setInfo 方法
-  const {info} = userInfoStore(); 
+  // 获取 info 
+  const info = useUserStore((state) => state.info); 
   const handleLogout = () => {
     // 移除客户端 token
     localStorage.removeItem("token");
@@ -33,7 +33,7 @@ export default function MePage() {
           </div>
           
           <p className="text-gray-500 text-sm mt-1">
-            ID: {info?.username || "未知"}
+            用户： {info?.username || "未知"}
           </p>
         </div>
       </div>

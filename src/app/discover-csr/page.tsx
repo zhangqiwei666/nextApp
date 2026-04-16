@@ -16,13 +16,13 @@ import { hotTopicsApi, type HotTopic } from "@/api/api";
 export default function DiscoverCSRPage() {
   const [topics, setTopics] = useState<HotTopic[]>([]);
   const [loading, setLoading] = useState(true);
-  const [fetchTime, setFetchTime] = useState<string>("");
-  const [fetchDuration, setFetchDuration] = useState<number>(0);
+  // const [fetchTime, setFetchTime] = useState<string>("");
+  // const [fetchDuration, setFetchDuration] = useState<number>(0);
   const [clientTime, setClientTime] = useState<string>("");
 
   const fetchData = useCallback(async () => {
     setLoading(true);
-    const start = Date.now();
+    // const start = Date.now();
     // 记录开始请求的时间
     setClientTime(
       new Date().toLocaleString("zh-CN", {
@@ -45,23 +45,23 @@ export default function DiscoverCSRPage() {
         throw new Error("Empty response from API");
       }
       const { data, code } = res;
-      const duration = Date.now() - start;
+      // const duration = Date.now() - start;
       if (code === 200) {
-        console.log(
-          `[CSR Client] 浏览器端数据获取完成，耗时 ${duration}ms，共 ${data} 条热搜`
-        );
+        // console.log(
+        //   // `[CSR Client] 浏览器端数据获取完成，耗时 ${duration}ms，共 ${data} 条热搜`
+        // );
         setTopics(data);
-        const serverTime = new Date().toLocaleString("zh-CN", {
-          timeZone: "Asia/Shanghai",
-          year: "numeric",
-          month: "2-digit",
-          day: "2-digit",
-          hour: "2-digit",
-          minute: "2-digit",
-          second: "2-digit",
-        });
-        setFetchTime(serverTime);
-        setFetchDuration(duration);
+        // const serverTime = new Date().toLocaleString("zh-CN", {
+        //   timeZone: "Asia/Shanghai",
+        //   year: "numeric",
+        //   month: "2-digit",
+        //   day: "2-digit",
+        //   hour: "2-digit",
+        //   minute: "2-digit",
+        //   second: "2-digit",
+        // });
+        // setFetchTime(serverTime);
+        // setFetchDuration(duration);
       } else {
         throw new Error('code is not 200');
       }
@@ -107,7 +107,7 @@ export default function DiscoverCSRPage() {
             </span>
           </div>
           <div className="space-y-1.5 text-[12px] text-orange-600">
-            <p>📌 数据在 <strong>浏览器端</strong> 通过 fetch 获取{fetchDuration > 0 && <>，耗时 <strong>{fetchDuration}ms</strong></>}</p>
+            {/* <p>📌 数据在 <strong>浏览器端</strong> 通过 fetch 获取{fetchDuration > 0 && <>，耗时 <strong>{fetchDuration}ms</strong></>}</p> */}
             <p>📌 客户端发起请求时间: <strong>{clientTime || "获取中..."}</strong></p>
             <p>📌 浏览器先收到 <strong>空白骨架 HTML</strong>，然后才加载数据</p>
             <p>📌 查看 <strong>网页源代码</strong> 看不到任何热搜数据</p>

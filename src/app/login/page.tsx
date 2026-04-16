@@ -5,13 +5,17 @@ import {Eye, EyeSlash} from "@gravity-ui/icons";
 import {Button, FieldError, Form, Input, TextField, InputGroup, toast} from "@heroui/react";
 import {userApi} from '@/api/login';
 import { HttpError} from '@/api/request';
-import { userInfoStore } from '@/store/user';
+import { useUserStore } from '@/store/user';
+
+// 1. 引入 useRouter
+import { useRouter } from 'next/navigation';
 
 // import { cookies } from 'next/headers';
 export default function LoginPage() {
+  const router = useRouter(); 
   const [showPassword, setShowPassword] = useState(false);
     // 获取 setInfo 方法
-  const setInfo = userInfoStore((state) => state.setInfo);
+  const setInfo = useUserStore((state) => state.setInfo);
 
   const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -39,9 +43,9 @@ export default function LoginPage() {
         if (redirectUrl.startsWith('/login')) {
           redirectUrl = '/';
         }
-
+        router.push(redirectUrl); 
         // 使用 window.location.href 强跳，确保服务端和中间件获取最新 Cookie 并丢弃旧的路由缓存
-        window.location.href = redirectUrl;
+        // window.location.href = redirectUrl;
         return;
       }
     } catch (err) {
